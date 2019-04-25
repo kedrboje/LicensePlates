@@ -6,7 +6,7 @@ import cv2
 from collections import Counter
 
 
-class Dataset_Generator():
+class Alphabet_Gen():
 
     def __init__(self, tag, dirpath: str = 'dataset/'):
         self.lplates = list()
@@ -25,5 +25,5 @@ class Dataset_Generator():
         return sorted(Counter(self.symbols).keys())
 
 
-gen = Dataset_Generator(tag='train')
+gen = Alphabet_Gen(tag='train')
 print(gen.get_alphabet())
