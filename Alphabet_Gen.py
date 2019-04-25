@@ -16,8 +16,11 @@ class Alphabet_Gen():
     def __init__(self, tag, dirpath: str = 'dataset/'):
         self.lplates = list()
         self.symbols = ''
+
         if tag == 'train' or tag == 'test':
             self.dirpath = os.path.join(dirpath, tag, 'ann')
+        else:
+            raise Exception('wrong path')
 
     def get_alphabet(self):
 
