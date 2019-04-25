@@ -1,8 +1,6 @@
 import keras
-import tensorflow as tf
 import os
 import json
-import cv2
 from collections import Counter
 
 
