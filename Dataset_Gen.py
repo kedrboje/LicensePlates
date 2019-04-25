@@ -23,7 +23,7 @@ class Dataset_gen():
                     ann = json.load(open(os.path.join(root, file), 'r'))
                     desc = ann['description']
                     if self.alp.is_valid(desc):
-                        print(True) # too much samples
+                        self.num_sampes += 1
 
         elif tag == 'test':
             self.dirpath = os.path.join(dirpath, tag)
@@ -35,7 +35,10 @@ class Dataset_gen():
                     ann = json.load(open(os.path.join(root, file), 'r'))
                     desc = ann['description']
                     if self.alp.is_valid(desc):
-                        print(True)
+                        self.num_sampes += 1
 
 
-asd = Dataset_gen(tag='test') # don't use train (see comment above)
+asd = Dataset_gen(tag='test')  # don't use train (see comment above)
+qwe = Dataset_gen(tag='train')
+print(asd.num_sampes + qwe.num_sampes)
+print(qwe.num_sampes)
