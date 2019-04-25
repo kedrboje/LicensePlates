@@ -13,7 +13,7 @@ class Alphabet_Gen():
         self.symbols = ''
         if tag == 'train' or tag == 'test':
             self.dirpath = os.path.join(dirpath, tag, 'ann')
-            
+          
     def get_alphabet(self):
 
         for root, dirs, files in os.walk(self.dirpath):
@@ -24,6 +24,14 @@ class Alphabet_Gen():
                 self.symbols += desc
         return sorted(Counter(self.symbols).keys())
 
+    def is_valid(string):
+
+        for symbol in string:
+            if symbol not in self.symbols:
+                raise ValueError
+                return False
+            else:
+                return True
 
 gen = Alphabet_Gen(tag='train')
 print(gen.get_alphabet())
