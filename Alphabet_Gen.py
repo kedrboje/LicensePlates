@@ -17,7 +17,7 @@ class Alphabet_Gen():
         self.lplates = list()
         self.symbols = ''
 
-        if tag == 'train' or tag == 'test':
+        if tag == 'train' or tag == 'test' or tag == 'val':
             self.dirpath = os.path.join(dirpath, tag, 'ann')
         else:
             raise Exception('wrong path')
@@ -30,6 +30,7 @@ class Alphabet_Gen():
                 tag = ann['tags']
                 desc = ann['description']
                 self.symbols += desc
+                print(tag)
         return sorted(Counter(self.symbols).keys())
 
     def is_valid(self, string):
