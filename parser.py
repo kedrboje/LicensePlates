@@ -14,7 +14,7 @@ class img_parser():
 
     def get_links_storage(self, attr: str, links_storage_path: str):
         self.storage = self.soup.findAll('img')  # here would be your tag
-        with open(links_storage_path, 'a') as f:
+        with open(links_storage_path, 'w') as f:
             for link in self.storage[1:]:  # delete [1:] if you need first item
                 f.write(str(link.get(attr)) + "\n")
 
