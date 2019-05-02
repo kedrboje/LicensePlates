@@ -1,7 +1,7 @@
 """
 Class Alphabet_Gen consist of two methods:
     1. get_alphabet() - return sorted array of symbols from the .json files in
-    the dataset/test/ann or dataset/train/ann folders.
+    the dataset_sup/test/ann or dataset_sup/train/ann folders.
     2. is_valid(string) - return Bool value. True if string consist of
     characters from the generated alphabet.
 """
@@ -13,7 +13,7 @@ from collections import Counter
 
 class Alphabet_Gen():
 
-    def __init__(self, tag, dirpath: str = 'dataset/'):
+    def __init__(self, tag, dirpath: str = 'dataset_sup/'):
         self.lplates = list()
         self.symbols = ''
 

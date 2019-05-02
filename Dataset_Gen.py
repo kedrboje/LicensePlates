@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 class Dataset_gen():
 
-    def __init__(self, tag: str, img_h=34, img_w=152, dirpath: str = 'dataset/'):  # delete NONE
+    def __init__(self, tag: str, img_h=34, img_w=152, dirpath: str = 'dataset_sup/'):  # delete NONE
 
         self.patterns = []
         self.alp = AG.Alphabet_Gen(tag)
