@@ -4,7 +4,6 @@ import os
 import cv2
 import random
 import numpy as np
-import Alphabet_Gen as AG
 import matplotlib.pyplot as plt
 
 
@@ -16,7 +15,6 @@ class Data_Generator():
         self.img_h = img_h
         self.train_dirpath = os.path.join(dirpath, "train/img/")
         self.test_dirpath = os.path.join(dirpath, "test/img")
-        self.samples = []
         self.num_train = 10822
         self.num_test = 562
         self.current = 0
@@ -35,9 +33,6 @@ class Data_Generator():
                 self.labels.append(label)
 
         self.num = len(self.imgs)
-        # plt.imshow(self.imgs[500, :,:])
-        # plt.xlabel(self.labels[500])
-        # plt.show()
 
     def _get_sample(self):
         self.current += 1
@@ -45,7 +40,7 @@ class Data_Generator():
             self.current = 0
             random.randint(1, self.num)
         return self.imgs[self.current], self.labels[self.current]
-    
+
     def encode(self, text):
         return list(map(lambda x: self.voc.index(x), text))
 
@@ -53,27 +48,20 @@ class Data_Generator():
         while True:
             x = np.ones([self.batch_size, self.img_h, self.img_w, 1])
             y = np.ones([self.batch_size, 8])
-
             for i in range(self.batch_size):
-                # img = self._get_sample()
-                # txt = self.encode(sample[1])
-                # img = np.expand_dims(img, -1)
-                # x[i] = img
-                # y[i] = txt
                 img, label = self._get_sample()
                 img = np.expand_dims(img, -1)
                 label = self.encode(label)
                 x[i] = img
                 y[i] = label
             yield (x, y)
-    
+
 
 datagen = Data_Generator(batch_size=32, img_h=34, img_w=152)
 
 for i, (img, lbl) in enumerate(datagen.generate()):
-    print(img)
     plt.imshow(img[i, :, :, 0], cmap='gray')
     plt.xlabel(lbl[i])
     plt.show()
-    if i == 4: 
+    if i == 4:
         break
