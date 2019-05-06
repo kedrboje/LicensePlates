@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 class Data_Generator():
 
-    def __init__(self, batch_size, img_w, img_h, dirpath="dataset_sup/"):
+    def __init__(self, batch_size, img_h, img_w, dirpath="dataset_sup/"):
         self.batch_size = batch_size
         self.img_w = img_w
         self.img_h = img_h
@@ -22,22 +22,29 @@ class Data_Generator():
         self.current = 0
         self.voc = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
                     "A", "B", "C", "E", "H", "K", "M", "O", "P", "T", "X", "Y"]
+        self.imgs = np.zeros((self.num_test, self.img_h, self.img_w))
+        self.labels = []
 
         for root, dirs, files in os.walk(self.test_dirpath):
-            for file in files:
+            for i, file in enumerate(files):
                 img = cv2.imread(os.path.join(self.test_dirpath, file), 0)
                 img = img.astype(np.float32)
                 img /= 255
                 label = os.path.splitext(file)[0]
-                self.samples.append((img, label))
-        self.num = len(self.samples)
+                self.imgs[i, :, :] = img
+                self.labels.append(label)
+
+        self.num = len(self.imgs)
+        # plt.imshow(self.imgs[500, :,:])
+        # plt.xlabel(self.labels[500])
+        # plt.show()
 
     def _get_sample(self):
         self.current += 1
         if self.current >= self.num:
             self.current = 0
             random.randint(1, self.num)
-        return self.samples[self.current]
+        return self.imgs[self.current], self.labels[self.current]
     
     def encode(self, text):
         return list(map(lambda x: self.voc.index(x), text))
@@ -48,17 +55,25 @@ class Data_Generator():
             y = np.ones([self.batch_size, 8])
 
             for i in range(self.batch_size):
-                sample = self._get_sample()
-                img = sample[0]
-                txt = self.encode(sample[1])
+                # img = self._get_sample()
+                # txt = self.encode(sample[1])
+                # img = np.expand_dims(img, -1)
+                # x[i] = img
+                # y[i] = txt
+                img, label = self._get_sample()
                 img = np.expand_dims(img, -1)
+                label = self.encode(label)
                 x[i] = img
-                y[i] = txt
-
+                y[i] = label
             yield (x, y)
     
 
-datagen = Data_Generator(batch_size=32, img_w=152, img_h=34)
+datagen = Data_Generator(batch_size=32, img_h=34, img_w=152)
 
-for img, label in datagen.generate():
-    print(img, label)
+for i, (img, lbl) in enumerate(datagen.generate()):
+    print(img)
+    plt.imshow(img[i, :, :, 0], cmap='gray')
+    plt.xlabel(lbl[i])
+    plt.show()
+    if i == 4: 
+        break
