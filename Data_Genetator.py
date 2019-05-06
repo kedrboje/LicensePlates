@@ -21,7 +21,7 @@ class Data_Generator():
         self.num_test = 562
         self.current = 0
         self.voc = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-                        "A", "B", "C", "E", "H", "K", "M", "O", "P", "T", "X", "Y"]
+                    "A", "B", "C", "E", "H", "K", "M", "O", "P", "T", "X", "Y"]
 
         for root, dirs, files in os.walk(self.test_dirpath):
             for file in files:
@@ -44,22 +44,21 @@ class Data_Generator():
 
     def generate(self):
         while True:
-            x = np.ones([self.batch_size, self.img_w, self.img_h, 1])
-            y = np.ones([self.batch_size])
+            x = np.ones([self.batch_size, self.img_h, self.img_w, 1])
+            y = np.ones([self.batch_size, 8])
 
             for i in range(self.batch_size):
                 sample = self._get_sample()
-
                 img = sample[0]
-                txt = sample[1]
-                # img = img.T
+                txt = self.encode(sample[1])
                 img = np.expand_dims(img, -1)
                 x[i] = img
                 y[i] = txt
-                print((x, y))
 
-            # yield (x, y)
+            yield (x, y)
     
 
 datagen = Data_Generator(batch_size=32, img_w=152, img_h=34)
-print(datagen.encode('C072XK05'))
+
+for img, label in datagen.generate():
+    print(img, label)
