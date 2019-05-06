@@ -9,36 +9,35 @@ import matplotlib.pyplot as plt
 
 class Data_Generator():
 
-    def __init__(self, batch_size, img_h, img_w, dirpath="dataset_sup/"):
+    def __init__(self, type, batch_size, img_h, img_w, dirpath="dataset_sup/"):
         self.batch_size = batch_size
         self.img_w = img_w
         self.img_h = img_h
-        self.train_dirpath = os.path.join(dirpath, "train/img/")
-        self.test_dirpath = os.path.join(dirpath, "test/img")
-        self.num_train = 10822
-        self.num_test = 562
+        if type is "train":
+            self.dirpath = os.path.join(dirpath, "train/")
+            self.num = 10822
+        if type is "test":
+            self.dirpath = os.path.join(dirpath, "test/")
+            self.num = 562
         self.current = 0
         self.voc = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
                     "A", "B", "C", "E", "H", "K", "M", "O", "P", "T", "X", "Y"]
-        self.imgs = np.zeros((self.num_test, self.img_h, self.img_w))
+        self.imgs = np.zeros((self.num, self.img_h, self.img_w))
         self.labels = []
 
-        for root, dirs, files in os.walk(self.test_dirpath):
+        for root, dirs, files in os.walk(self.dirpath):
             for i, file in enumerate(files):
-                img = cv2.imread(os.path.join(self.test_dirpath, file), 0)
+                img = cv2.imread(os.path.join(self.dirpath, file), 0)
                 img = img.astype(np.float32)
                 img /= 255
                 label = os.path.splitext(file)[0]
                 self.imgs[i, :, :] = img
                 self.labels.append(label)
 
-        self.num = len(self.imgs)
-
     def _get_sample(self):
         self.current += 1
         if self.current >= self.num:
             self.current = 0
-            random.randint(1, self.num)
         return self.imgs[self.current], self.labels[self.current]
 
     def encode(self, text):
@@ -57,7 +56,7 @@ class Data_Generator():
             yield (x, y)
 
 
-datagen = Data_Generator(batch_size=32, img_h=34, img_w=152)
+datagen = Data_Generator(type="train", batch_size=32, img_h=34, img_w=152)
 
 for i, (img, lbl) in enumerate(datagen.generate()):
     plt.imshow(img[i, :, :, 0], cmap='gray')

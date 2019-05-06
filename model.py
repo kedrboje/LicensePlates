@@ -15,6 +15,3 @@ dataset_path = "dataset_sup/"
 train_data = np.zeros()
 
 #  Generators
-# train_data_gen = ImageDataGenerator(rescale=1./255) 
-# test_data_gen = ImageDataGenerator(rescale=1./255)
-
