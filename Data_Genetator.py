@@ -9,10 +9,11 @@ import matplotlib.pyplot as plt
 
 class Data_Generator():
 
-    def __init__(self, type, batch_size, img_h, img_w, dirpath="dataset_sup/"):
+    def __init__(self, type, batch_size, img_h, img_w, downsample, dirpath="dataset_sup/"):
         self.batch_size = batch_size
         self.img_w = img_w
         self.img_h = img_h
+        self.downsample = downsample
         if type is "train":
             self.dirpath = os.path.join(dirpath, "train/")
             self.num = 10821
@@ -60,7 +61,16 @@ class Data_Generator():
                 label = self.encode(label)
                 x[i] = img
                 y[i] = label
-            yield (x, y)
+            inputs = {
+                'input': x,
+                'labels': y,
+                'input_len': np.ones((self.batch_size, 1)) * (self.img_w // self.downsample - 2),
+                'label_len': np.empty((self.batch_size, 1))
+            }
+            outputs = {
+                'ctc': np.empty([self.batch_size])
+            }
+            yield (inputs, outputs)
 
 # datagen = Data_Generator(type="test", batch_size=32, img_h=34, img_w=152)
 # print(len(datagen.imgs))
