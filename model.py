@@ -87,7 +87,7 @@ model.compile(optimizer='rmsprop',
 
 history = model.fit_generator(train_datagen.generate(),
                               steps_per_epoch=10821,
-                              epochs=7,
+                              epochs=1,
                               validation_data=test_datagen.generate(),
                               validation_steps=561)
 
