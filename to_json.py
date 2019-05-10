@@ -12,6 +12,6 @@ def to_json(filename: str, indent=4):
     with open(filename, 'w') as f:
         json.dump(data, f, indent=indent)
 
-path = "model.json"
+path = "LP_model.json"
 
 to_json(path)
