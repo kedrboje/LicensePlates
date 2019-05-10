@@ -9,23 +9,24 @@ import matplotlib.pyplot as plt
 
 class Data_Generator():
 
-    def __init__(self, type, batch_size, img_h, img_w, downsample, dirpath="dataset_sup/"):
+    def __init__(self, type, batch_size, img_h, img_w, downsample, max_lbl_len, dirpath="dataset_sup/"):
         self.batch_size = batch_size
         self.img_w = img_w
         self.img_h = img_h
         self.downsample = downsample
+        self.max_lbl_len = max_lbl_len
         if type is "train":
             self.dirpath = os.path.join(dirpath, "train/")
-            self.num = 10821
+            self.num = 4392
         if type is "test":
             self.dirpath = os.path.join(dirpath, "test/")
-            self.num = 561
+            self.num = 491
         if type is "valid":
             self.dirpath = os.path.join(dirpath, "valid/")
-            self.num = 21
+            self.num = 546
         self.current = 0
         self.voc = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-                    "A", "B", "C", "E", "H", "K", "M", "O", "P", "T", "X", "Y"]
+                    "A", "B", "C", "E", "H", "K", "M", "O", "P", "T", "X", "Y", " "]
         self.imgs = np.empty((self.num, self.img_h, self.img_w))
         self.labels = []
         self.indexes = list(range(self.num))
@@ -37,6 +38,8 @@ class Data_Generator():
                 img = img.astype(np.float32)
                 img /= 255
                 label = os.path.splitext(file)[0]
+                if len(label) < 9:
+                    label += " "
                 self.imgs[i, :, :] = img
                 self.labels.append(label)
 
@@ -53,7 +56,8 @@ class Data_Generator():
     def generate(self):
         while True:
             x = np.empty([self.batch_size, self.img_w, self.img_h, 1])
-            y = np.empty([self.batch_size, 8])
+            y = np.empty([self.batch_size, self.max_lbl_len])
+            label_len =np.zeros((self.batch_size, 1))
             for i in range(self.batch_size):
                 img, label = self._get_sample()
                 img = img.T
@@ -61,29 +65,26 @@ class Data_Generator():
                 label = self.encode(label)
                 x[i] = img
                 y[i] = label
+                label_len[i] = len(label)
             inputs = {
                 'input': x,
                 'labels': y,
                 'input_len': np.ones((self.batch_size, 1)) * (self.img_w // self.downsample - 2),
-                'label_len': np.empty((self.batch_size, 1))
+                'label_len': label_len
             }
             outputs = {
                 'ctc': np.empty([self.batch_size])
             }
             yield (inputs, outputs)
 
-# datagen = Data_Generator(type="test", batch_size=32, img_h=34, img_w=152)
+# datagen = Data_Generator(type="valid", batch_size=32, img_h=64, img_w=128, downsample=4, max_lbl_len=9)
 # print(len(datagen.imgs))
 # print(len(datagen.labels))
 # print(len(datagen.indexes))
-# for i, (img, lbl) in enumerate(datagen.generate()):
-#     plt.imshow(img[i, :, :, 0])
-#     plt.xlabel(lbl[i])
+# for i, (inp, out) in enumerate(datagen.generate()):
+#     plt.imshow(inp['input'][i, :, :, 0].T)
+#     plt.xlabel(inp['labels'][i])
 #     plt.show()
 #     if i == 4:
 #         break
-# for i, (a, b) in enumerate(datagen.generate()):
-#     print(a[i], b[i])
-#     i += 1
-#     print(i)
 
